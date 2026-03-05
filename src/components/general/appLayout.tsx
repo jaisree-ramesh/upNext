@@ -6,9 +6,18 @@ import {
 } from "../../context/PageHeaderContect";
 import PageHeader from "./pageHeader";
 import FilterPanel from "../filter/filterPanel";
+import { useEffect } from "react";
+import { useGenreStore } from "@/store/genreStore";
 
 const LayoutInner = () => {
   const { title, query, setQuery, filterType } = usePageHeader();
+
+  const loadMovieGenres = useGenreStore((s) => s.loadMovieGenres);
+
+  useEffect(() => {
+    loadMovieGenres();
+  }, [loadMovieGenres]);
+
 
   return (
     <div className="min-h-svh flex flex-col">

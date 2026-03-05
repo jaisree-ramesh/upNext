@@ -1,7 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageHeader } from "../../context/PageHeaderContect";
-import MediaCarousel from "../media/mediaCarousel";
-import { mockMovies } from "../mock/media";
 import {
   useFilterActions,
   useMovieGenres,
@@ -9,9 +7,17 @@ import {
 } from "../../store/filterStore";
 import { filterMovies } from "../../lib/filterMedia";
 import { useFilteredMedia } from "../../hooks/filteredMedia";
+import { useStreamingMedia } from "@/hooks/streamingMedia";
+import { MediaGrid } from "../media/mediaGrid";
+import { MediaPagination } from "../media/mediaPagination";
 
 const AtHomePage = () => {
   const { setTitle, query, setFilterType } = usePageHeader();
+
+  const [page, setPage] = useState(1);
+
+  const { items, loading, error, totalPages } = useStreamingMedia(page);
+
   const movieGenres = useMovieGenres();
   const providers = useProviders();
   const { clearAll } = useFilterActions();
@@ -23,14 +29,14 @@ const AtHomePage = () => {
   }, [setTitle, setFilterType, clearAll]);
 
   const itemsToShow = useFilteredMedia({
-    items: mockMovies,
+    items,
     query,
     filterFn: () => {
       if (movieGenres.length === 0 && providers.length === 0) {
-        return mockMovies;
+        return items;
       }
 
-      return filterMovies(mockMovies, {
+      return filterMovies(items, {
         query: "",
         genres: movieGenres,
         providers,
@@ -38,10 +44,33 @@ const AtHomePage = () => {
     },
   });
 
+  if (loading) {
+    return <p className="mt-12 text-center">Loading…</p>;
+  }
+
+  if (error) {
+    return <p className="mt-12 text-center text-red-500">{error}</p>;
+  }
+
   return (
     <div>
       {itemsToShow.length > 0 ? (
-        <MediaCarousel items={itemsToShow} />
+        <>
+          <MediaGrid
+            items={itemsToShow}
+            onMore={(item) => {
+              // TODO: open modal here
+              console.log("More clicked:", item);
+            }}
+          />
+
+          <MediaPagination
+            page={page}
+            totalPages={totalPages}
+            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+            onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+          />
+        </>
       ) : (
         <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
       )}

@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageHeader } from "../../context/PageHeaderContect";
-import MediaCarousel from "../media/mediaCarousel";
-import { mockMovies } from "../mock/media";
 import { filterMovies } from "../../lib/filterMedia";
 import { useMovieGenres, useProviders, useFilterActions } from "../../store/filterStore";
 import { useFilteredMedia } from "../../hooks/filteredMedia";
+import { useNowPlayingMovies } from "@/hooks/nowPlayingMovies";
+import { MediaGrid } from "../media/mediaGrid";
+import { MediaPagination } from "../media/mediaPagination";
 
 const CinemaPage = () => {
   const { setTitle, query, setFilterType } = usePageHeader();
@@ -12,6 +13,8 @@ const CinemaPage = () => {
   const movieGenres = useMovieGenres();
   const providers = useProviders();
   const { clearAll } = useFilterActions();
+  const [page, setPage] = useState(1);
+  const { movies, loading, error, totalPages } = useNowPlayingMovies(page);
 
   useEffect(() => {
     setTitle("Find something to watch in the cinema");
@@ -19,45 +22,49 @@ const CinemaPage = () => {
     clearAll(); // reset filters when entering cinema
   }, [setTitle, setFilterType, clearAll]);
 
-  // const itemsToShow = useMemo(() => {
-  //   // 1️ Search wins
-  //   if (query.trim()) {
-  //     return searchByTitle([...mockMovies, ...mockPodcasts], query);
-  //   }
+  const itemsToShow = useFilteredMedia({
+    items: movies,
+    query,
+    filterFn: () => {
+      if (movieGenres.length === 0 && providers.length === 0) {
+        return movies;
+      }
 
-  //   // 2️ Filters
-  //   if (movieGenres.length > 0 || providers.length > 0) {
-  //     return filterMovies(mockMovies, {
-  //       query: "",
-  //       genres: movieGenres,
-  //       providers,
-  //     });
-  //   }
+      return filterMovies(movies, {
+        query: "",
+        genres: movieGenres,
+        providers,
+      });
+    },
+  });
 
-  //   // 3️ Default
-  //   return mockMovies;
-  // }, [query, movieGenres, providers]);
+  if (loading) {
+    return <p className="mt-12 text-center">Loading…</p>;
+  }
 
-   const itemsToShow = useFilteredMedia({
-     items: mockMovies,
-     query,
-     filterFn: () => {
-       if (movieGenres.length === 0 && providers.length === 0) {
-         return mockMovies;
-       }
-
-       return filterMovies(mockMovies, {
-         query: "",
-         genres: movieGenres,
-         providers,
-       });
-     },
-   });
+  if (error) {
+    return <p className="mt-12 text-center text-red-500">{error}</p>;
+  }
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       {itemsToShow.length > 0 ? (
-        <MediaCarousel items={itemsToShow} />
+        <>
+          <MediaGrid
+            items={itemsToShow}
+            onMore={(media) => {
+              // TODO: open dialog/modal here
+              console.log("More info:", media);
+            }}
+          />
+
+          <MediaPagination
+            page={page}
+            totalPages={totalPages}
+            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+            onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+          />
+        </>
       ) : (
         <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
       )}

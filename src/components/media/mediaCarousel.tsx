@@ -1,4 +1,4 @@
-import type { IMovieMediaProps, IPodcastProps } from "../../types/media";
+import type { IMovieMediaProps, IPodcastProps, ITvMediaProps } from "../../types/media";
 import MediaCard from "./mediaCard";
 import { Button } from "../ui/button";
 import useEmblaCarousel from "embla-carousel-react";
@@ -6,7 +6,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface IMediaCarouselProps {
-  items: (IMovieMediaProps | IPodcastProps)[];
+  items: (IMovieMediaProps | IPodcastProps | ITvMediaProps)[];
   onDetails?: (item: IMovieMediaProps | IPodcastProps) => void;
 }
 

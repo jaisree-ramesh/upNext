@@ -1,5 +1,5 @@
 import type { MovieGenre, StreamingProvider } from "@/types/filterTypes";
-import type { IMovieMediaProps } from "../types/media";
+import type { IMovieMediaProps, ITvMediaProps } from "../types/media";
 
 interface MovieFilterOptions {
   query: string;
@@ -8,7 +8,7 @@ interface MovieFilterOptions {
 }
 
 export function filterMovies(
-  movies: IMovieMediaProps[],
+  movies: (IMovieMediaProps | ITvMediaProps)[],
   options: MovieFilterOptions,
 ) {
   const { query, genres, providers } = options;
@@ -32,7 +32,7 @@ export function filterMovies(
       // for now assume movie.providers?: string[]
       if (
         !movie.providers?.some((p) =>
-          providers.includes(p as StreamingProvider),
+          providers.includes(p.name as StreamingProvider),
         )
       ) {
         return false;

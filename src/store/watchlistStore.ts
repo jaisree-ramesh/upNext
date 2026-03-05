@@ -1,17 +1,17 @@
-import type { IMovieMediaProps, IPodcastProps } from "../types/media";
+import type { IMovieMediaProps, IPodcastProps, ITvMediaProps } from "../types/media";
 import { persist } from "zustand/middleware";
 import { create } from "zustand";
 
 interface WatchListActions {
-  add: (item: IMovieMediaProps | IPodcastProps) => void;
+  add: (item: IMovieMediaProps | IPodcastProps | ITvMediaProps) => void;
   remove: (id: string) => void;
-  toggle: (item: IMovieMediaProps | IPodcastProps) => void;
+  toggle: (item: IMovieMediaProps | IPodcastProps | ITvMediaProps) => void;
   isInWatchlist: (id: string) => boolean;
   clear: () => void;
 }
 
 interface WatchlistState {
-  items: (IMovieMediaProps | IPodcastProps)[];
+  items: (IMovieMediaProps | IPodcastProps | ITvMediaProps)[];
   actions: WatchListActions;
 }
 
