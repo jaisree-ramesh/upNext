@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import type { IMovieMediaProps, ITvMediaProps } from "@/types/media";
 import {
   getMovieProviders,
-  getPopularTvShows,
   getTvProviders,
 } from "@/api/providers";
 import { useProviderStore } from "@/store/providerStore";
-import { getStreamingMovies } from "@/api/streamingMovies";
+import type { IMediaQuery } from "@/types/mediaQuery";
+import { getStreamingMedia } from "@/api/streaming";
+import { getMovieAgeRating, getTvAgeRating } from "@/api/ageRatings";
+import type { IStreamingMedia } from "@/types/media";
+import { useAgeRatingStore } from "@/store/ageRatingStore";
 
-type MediaItem = IMovieMediaProps | ITvMediaProps;
 
-export function useStreamingMedia(page: number) {
-  const [items, setItems] = useState<MediaItem[]>([]);
+export function useStreamingMedia(props: IMediaQuery) {
+  const [items, setItems] = useState<(IStreamingMedia)[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,55 +20,54 @@ export function useStreamingMedia(page: number) {
   const providersById = useProviderStore((s) => s.providersByMovieId);
   const setProviders = useProviderStore((s) => s.setProviders);
 
+  const ratings = useAgeRatingStore((s) => s.ratings);
+  const setRating = useAgeRatingStore((s) => s.setRating);
+
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
 
-        // 1️⃣ Fetch movies + TV in parallel (both paginated)
-        const [movieRes, tvRes] = await Promise.all([
-          getStreamingMovies(page),
-          getPopularTvShows(page),
-        ]);
+        const { results, totalPages } = await getStreamingMedia(props);
+        setTotalPages(totalPages);
 
-        const combined: MediaItem[] = [...movieRes.results, ...tvRes.results];
-
-        // total pages = min of both (to stay in sync)
-        setTotalPages(Math.min(movieRes.totalPages, tvRes.totalPages));
-
-        // 2️⃣ Enrich with providers (cached)
         const enriched = await Promise.all(
-          combined.map(async (item) => {
+          results.map(async (item) => {
             let providers = providersById[item.id];
 
             if (!providers) {
               const rawProviders =
-                item.type === "movie"
+                item.kind === "movie"
                   ? await getMovieProviders(item.id)
                   : await getTvProviders(item.id);
 
-              providers = rawProviders.map((p) => ({
+              providers = rawProviders.map((p: any) => ({
                 id: p.provider_id,
                 name: p.provider_name,
                 logo: `https://image.tmdb.org/t/p/w92${p.logo_path}`,
               }));
 
               setProviders(item.id, providers);
+
             }
 
+            let ageRating: string | null = ratings[item.id];
+            if (!ageRating) {
+              ageRating =
+                item.kind === "movie"
+                  ? await getMovieAgeRating(item.id)
+                  : await getTvAgeRating(item.id);
+              setRating(item.id, ageRating);
+            }
             return {
               ...item,
               providers,
+              ageRating,
             };
           }),
         );
 
-        // 3️⃣ Only keep items that actually have providers (streaming only)
-        const onlyStreaming = enriched.filter(
-          (i) => i.providers && i.providers.length > 0,
-        );
-
-        setItems(onlyStreaming);
+        setItems(enriched);
       } catch (e) {
         console.error(e);
         setError("Failed to load streaming content");
@@ -77,7 +77,14 @@ export function useStreamingMedia(page: number) {
     }
 
     load();
-  }, [page, setProviders]); // ❗ no providersById here to avoid loops
+  }, [
+    props.page,
+    props.kind,
+    props.language,
+    props.query,
+    props.genres?.join(","),
+    props.providers?.join(","),
+  ]);
 
   return { items, loading, error, totalPages };
 }

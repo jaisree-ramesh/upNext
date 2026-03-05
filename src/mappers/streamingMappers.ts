@@ -3,29 +3,30 @@ import { MediaType, type IStreamingMedia } from "@/types/media";
 
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
-export function mapTmdbTvToMedia(tv: any): IStreamingMedia {
+export function mapTmdbMovieToStreaming(movie: any): IStreamingMedia {
   return {
-    id: tv.id,
-    title: tv.name,
-    image: tv.poster_path
-      ? `${IMAGE_BASE}${tv.poster_path}`
+    id: movie.id,
+    title: movie.title,
+    description: movie.overview,
+    image: movie.poster_path
+      ? `${IMAGE_BASE}${movie.poster_path}`
       : "/placeholder.png",
-    description: tv.overview,
-    year: tv.first_air_date
-      ? Number(tv.first_air_date.split("-")[0])
+    year: movie.release_date
+      ? Number(movie.release_date.split("-")[0])
       : new Date().getFullYear(),
-    genres: tv.genre_ids,
+    genres: movie.genre_ids,
     // .map((id: number) => tmdb_genre_map[id])
     // .filter(Boolean),
-    genreNames: tv.genre_ids
+    genreNames: movie.genre_ids
       .map((id: number) => tmdb_genre_map[id])
       .filter(Boolean),
 
     section: MediaType.Streaming,
-    kind: "tv",
+    kind: "movie",
+
     providers: [],
-    rating: tv.vote_average,
-    orginalLanguage: tv.original_language,
+    rating: movie.vote_average,
+    orginalLanguage: movie.original_language ?? undefined,
     ageRating: null,
   };
 }

@@ -5,42 +5,50 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
-type Props = {
+interface IGridPagiationProps {
   page: number;
   totalPages: number;
   onPrev: () => void;
   onNext: () => void;
-};
+}
 
-export function MediaPagination({ page, totalPages, onPrev, onNext }: Props) {
+const MediaPagination = (props: IGridPagiationProps) => {
   return (
     <Pagination className="mt-8">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            onClick={onPrev}
-            aria-disabled={page <= 1}
-            className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+            onClick={props.onPrev}
+            aria-disabled={props.page <= 1}
+            className={cn(
+              "cursor-pointer transition-opacity",
+              props.page <= 1 && "pointer-events-none opacity-40",
+            )}
           />
         </PaginationItem>
 
         <PaginationItem>
           <span className="px-4 text-sm text-muted-foreground">
-            Page {page} / {totalPages}
+             {props.page} / {props.totalPages}
           </span>
         </PaginationItem>
 
         <PaginationItem>
           <PaginationNext
-            onClick={onNext}
-            aria-disabled={page >= totalPages}
-            className={
-              page >= totalPages ? "pointer-events-none opacity-50" : ""
-            }
+            onClick={props.onNext}
+            aria-disabled={props.page >= props.totalPages}
+      
+            className={cn(
+              "cursor-pointer transition-opacity",
+              props.page >= props.totalPages && "pointer-events-none opacity-40",
+            )}
           />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
   );
-}
+};
+
+export default MediaPagination;

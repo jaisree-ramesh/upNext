@@ -1,27 +1,35 @@
 import { create } from "zustand";
-import { fetchMovieGenres, type TMDBGenre } from "@/api/tmdbGenres";
+import { fetchGenres, type TMDBGenre } from "@/api/tmdbGenres";
 
 interface GenreState {
   movieGenres: TMDBGenre[];
+  tvGenres: TMDBGenre[];
   loading: boolean;
   error?: string;
-  loadMovieGenres: () => Promise<void>;
+  loadGenres: (type: "movie" | "tv", language: "de" | "en") => Promise<void>;
 }
 
 export const useGenreStore = create<GenreState>((set) => ({
   movieGenres: [],
+  tvGenres: [],
   loading: false,
+  error: undefined,
 
-  loadMovieGenres: async () => {
+  loadGenres: async (type, language) => {
     try {
-      set({ loading: true });
-      const genres = await fetchMovieGenres();
-      set({ movieGenres: genres, loading: false });
-    } catch (e) {
+      set({ loading: true, error: undefined });
+      const genres = await fetchGenres(type, language);
+
+      if (type === "movie") {
+        set({ movieGenres: genres, loading: false });
+      } else {
+        set({ tvGenres: genres, loading: false });
+      }
+    } catch {
       set({ loading: false, error: "Failed to load genres" });
     }
   },
 }));
 
-// selector (important)
 export const useMovieGenreList = () => useGenreStore((s) => s.movieGenres);
+export const useTvGenreList = () => useGenreStore((s) => s.tvGenres);

@@ -1,5 +1,5 @@
 import { useFilterActions } from "@/store/filterStore";
-import type { MediaType } from "@/types/media";
+import { MediaType, type StreamingKind } from "@/types/media";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface PageHeaderContextValue {
@@ -10,6 +10,8 @@ interface PageHeaderContextValue {
   filterType: MediaType;
   setFilterType: (type: PageHeaderContextValue["filterType"]) => void;
   clearQuery: () => void;
+  streamingKind:StreamingKind;
+  setStreamingKind: (kind: StreamingKind) => void;
 }
 
 const PageHeaderContext = createContext<PageHeaderContextValue | null>(null);
@@ -21,7 +23,8 @@ export const PageHeaderProvider = ({
 }) => {
   const [title, setTitle] = useState("");
   const [query, setQuery] = useState("");
-  const [filterType, setFilterType] = useState<MediaType>("both");
+  const [filterType, setFilterType] = useState<MediaType >(MediaType.Cinema);
+  const [streamingKind, setStreamingKind] = useState<StreamingKind>("movie");
   const clearQuery = () => setQuery("");
   const { clearAll } = useFilterActions();
 
@@ -39,6 +42,8 @@ export const PageHeaderProvider = ({
         filterType,
         setFilterType,
         clearQuery,
+        streamingKind,
+        setStreamingKind,
       }}
     >
       {children}

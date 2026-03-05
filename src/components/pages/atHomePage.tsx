@@ -4,48 +4,60 @@ import {
   useFilterActions,
   useMovieGenres,
   useProviders,
+  useTvGenres,
 } from "../../store/filterStore";
-import { filterMovies } from "../../lib/filterMedia";
-import { useFilteredMedia } from "../../hooks/filteredMedia";
 import { useStreamingMedia } from "@/hooks/streamingMedia";
-import { MediaGrid } from "../media/mediaGrid";
-import { MediaPagination } from "../media/mediaPagination";
+import MediaGrid from "../media/mediaGrid";
+import MediaPagination from "../media/mediaPagination";
+import MediaDetailsDialog from "../media/mediaDetailsDialog";
+import { MediaType, type IStreamingMedia } from "@/types/media";
+import GridSkeleton from "../media/gridSkeleton";
+import { ShimmerButton } from "../ui/shimmer-button";
+import EmptyState from "../media/emptyState";
 
 const AtHomePage = () => {
-  const { setTitle, query, setFilterType } = usePageHeader();
-
-  const [page, setPage] = useState(1);
-
-  const { items, loading, error, totalPages } = useStreamingMedia(page);
+  const { setTitle, query, setFilterType, streamingKind, setStreamingKind } =
+    usePageHeader();
 
   const movieGenres = useMovieGenres();
+  const tvGenres = useTvGenres();
+
   const providers = useProviders();
   const { clearAll } = useFilterActions();
 
+  const [page, setPage] = useState(1);
+
+  const activeGenres = streamingKind === "movie" ? movieGenres : tvGenres;
+
+  const [selected, setSelected] = useState<IStreamingMedia | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { items, loading, error, totalPages } = useStreamingMedia({
+    page,
+    section: MediaType.Streaming,
+    kind: streamingKind,
+    language: "de",
+    query,
+    genres: activeGenres,
+    providers,
+  });
+
   useEffect(() => {
     setTitle("Find something to watch at home");
-    setFilterType("movie");
+    setFilterType(MediaType.Streaming);
     clearAll();
   }, [setTitle, setFilterType, clearAll]);
 
-  const itemsToShow = useFilteredMedia({
-    items,
-    query,
-    filterFn: () => {
-      if (movieGenres.length === 0 && providers.length === 0) {
-        return items;
-      }
-
-      return filterMovies(items, {
-        query: "",
-        genres: movieGenres,
-        providers,
-      });
-    },
-  });
+  useEffect(() => {
+    setPage(1);
+  }, [query, activeGenres.join(","), providers.join(","), streamingKind]);
 
   if (loading) {
-    return <p className="mt-12 text-center">Loading…</p>;
+    return (
+      <div className="mt-12 text-center">
+        <GridSkeleton />
+      </div>
+    );
   }
 
   if (error) {
@@ -53,14 +65,33 @@ const AtHomePage = () => {
   }
 
   return (
-    <div>
-      {itemsToShow.length > 0 ? (
+    <div className="flex flex-col gap-6">
+      <div className="flex  ml-9 mr-2 mt-5">
+        <ShimmerButton
+          background={` ${streamingKind === "movie" ? "black" : "white"}`}
+          className={` ${streamingKind === "movie" ? "text-white" : "!text-black"}`}
+          onClick={() => setStreamingKind("movie")}
+          borderRadius="7px"
+        >
+          Movies
+        </ShimmerButton>
+        <ShimmerButton
+          background={` ${streamingKind === "tv" ? "black" : "white"}`}
+          className={` ${streamingKind === "tv" ? "text-white" : "!text-black"}`}
+          onClick={() => setStreamingKind("tv")}
+          borderRadius="7px"
+        >
+          TV Shows
+        </ShimmerButton>
+      </div>
+
+      {items.length > 0 ? (
         <>
           <MediaGrid
-            items={itemsToShow}
-            onMore={(item) => {
-              // TODO: open modal here
-              console.log("More clicked:", item);
+            items={items}
+            onMore={(media) => {
+              setSelected(media);
+              setDialogOpen(true);
             }}
           />
 
@@ -70,9 +101,16 @@ const AtHomePage = () => {
             onPrev={() => setPage((p) => Math.max(1, p - 1))}
             onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
           />
+
+          <MediaDetailsDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            media={selected}
+          />
         </>
       ) : (
-        <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
+        // <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
+        <EmptyState />
       )}
     </div>
   );

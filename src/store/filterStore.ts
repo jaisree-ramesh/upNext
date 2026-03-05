@@ -1,24 +1,21 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type {
-  MovieGenre,
-  StreamingProvider,
-  PodcastGenre,
-} from "../types/filterTypes";
+import type { PodcastGenre } from "../types/filterTypes";
 
 interface FilterState {
-  // movie / tv
-  movieGenres: MovieGenre[];
-  providers: StreamingProvider[];
-
-  // podcasts
+  movieGenres: number[];
+  tvGenres: number[];
+  providers: number[];
   podcastCategories: PodcastGenre[];
 
   actions: {
-    toggleMovieGenre: (genre: MovieGenre) => void;
-    toggleProvider: (provider: StreamingProvider) => void;
+    toggleMovieGenre: (genreId: number) => void;
+    toggleTvGenre: (genreId: number) => void;
+    toggleProvider: (provider: number) => void;
     togglePodcastCategory: (category: PodcastGenre) => void;
+    clearStreaming: () => void;
     clearMovies: () => void;
+    clearTv: () => void;
     clearPodcasts: () => void;
     clearAll: () => void;
   };
@@ -28,25 +25,35 @@ export const useFilterStore = create<FilterState>()(
   persist(
     (set, get) => ({
       movieGenres: [],
+      tvGenres: [],
       providers: [],
       podcastCategories: [],
 
       actions: {
-        toggleMovieGenre: (genre) => {
+        toggleMovieGenre: (genreId) => {
           const current = get().movieGenres;
           set({
-            movieGenres: current.includes(genre)
-              ? current.filter((g) => g !== genre)
-              : [...current, genre],
+            movieGenres: current.includes(genreId)
+              ? current.filter((g) => g !== genreId)
+              : [...current, genreId],
           });
         },
 
-        toggleProvider: (provider) => {
+        toggleTvGenre: (genreId) => {
+          const current = get().tvGenres;
+          set({
+            tvGenres: current.includes(genreId)
+              ? current.filter((g) => g !== genreId)
+              : [...current, genreId],
+          });
+        },
+
+        toggleProvider: (providerId) => {
           const current = get().providers;
           set({
-            providers: current.includes(provider)
-              ? current.filter((p) => p !== provider)
-              : [...current, provider],
+            providers: current.includes(providerId)
+              ? current.filter((p) => p !== providerId)
+              : [...current, providerId],
           });
         },
 
@@ -60,12 +67,19 @@ export const useFilterStore = create<FilterState>()(
         },
 
         clearMovies: () => set({ movieGenres: [], providers: [] }),
-
+        clearTv: () => set({ tvGenres: [] }),
         clearPodcasts: () => set({ podcastCategories: [] }),
+        clearStreaming: () =>
+          set({
+            movieGenres: [],
+            tvGenres: [],
+            providers: [],
+          }),
 
         clearAll: () =>
           set({
             movieGenres: [],
+            tvGenres: [],
             providers: [],
             podcastCategories: [],
           }),
@@ -77,6 +91,7 @@ export const useFilterStore = create<FilterState>()(
       //  persist ONLY data
       partialize: (state) => ({
         movieGenres: state.movieGenres,
+        tvGenres: state.tvGenres,
         providers: state.providers,
         podcastCategories: state.podcastCategories,
       }),
@@ -91,13 +106,11 @@ export const useFilterStore = create<FilterState>()(
 );
 
 export const useMovieGenres = () => useFilterStore((s) => s.movieGenres);
-
+export const useTvGenres = () => useFilterStore((s) => s.tvGenres);
 export const useProviders = () => useFilterStore((s) => s.providers);
-
 export const usePodcastCategories = () =>
   useFilterStore((s) => s.podcastCategories);
 
 // export const useClearFilters = () => useFilterStore((s) => s.actions.clearAll);
 
 export const useFilterActions = () => useFilterStore((s) => s.actions);
-

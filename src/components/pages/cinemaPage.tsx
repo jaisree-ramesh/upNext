@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { usePageHeader } from "../../context/PageHeaderContect";
-import { filterMovies } from "../../lib/filterMedia";
-import { useMovieGenres, useProviders, useFilterActions } from "../../store/filterStore";
-import { useFilteredMedia } from "../../hooks/filteredMedia";
-import { useNowPlayingMovies } from "@/hooks/nowPlayingMovies";
-import { MediaGrid } from "../media/mediaGrid";
-import { MediaPagination } from "../media/mediaPagination";
+import {
+  useMovieGenres,
+  useProviders,
+  useFilterActions,
+} from "../../store/filterStore";
+import { useCinemaMedia } from "@/hooks/cinemaMedia";
+import MediaGrid from "../media/mediaGrid";
+import { MediaType, type ICinemaMovie } from "@/types/media";
+import GridSkeleton from "../media/gridSkeleton";
+import EmptyState from "../media/emptyState";
+import MediaDetailsDialog from "../media/mediaDetailsDialog";
 
 const CinemaPage = () => {
   const { setTitle, query, setFilterType } = usePageHeader();
@@ -13,33 +18,38 @@ const CinemaPage = () => {
   const movieGenres = useMovieGenres();
   const providers = useProviders();
   const { clearAll } = useFilterActions();
+
+  const [selected, setSelected] = useState<ICinemaMovie | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const [page, setPage] = useState(1);
-  const { movies, loading, error, totalPages } = useNowPlayingMovies(page);
+
+  const { movies, loading, error } = useCinemaMedia({
+    page,
+    section: MediaType.Cinema,
+    language: "de",
+    query,
+    genres: movieGenres,
+    providers,
+  });
 
   useEffect(() => {
     setTitle("Find something to watch in the cinema");
-    setFilterType("movie");
-    clearAll(); // reset filters when entering cinema
+    setFilterType(MediaType.Cinema);
+    clearAll();
   }, [setTitle, setFilterType, clearAll]);
 
-  const itemsToShow = useFilteredMedia({
-    items: movies,
-    query,
-    filterFn: () => {
-      if (movieGenres.length === 0 && providers.length === 0) {
-        return movies;
-      }
-
-      return filterMovies(movies, {
-        query: "",
-        genres: movieGenres,
-        providers,
-      });
-    },
-  });
+  // Reset to page 1 when filters/search change
+  useEffect(() => {
+    setPage(1);
+  }, [query, movieGenres.join(","), providers.join(",")]);
 
   if (loading) {
-    return <p className="mt-12 text-center">Loading…</p>;
+    return (
+      <div className="mt-12 text-center">
+        <GridSkeleton />
+      </div>
+    );
   }
 
   if (error) {
@@ -48,25 +58,24 @@ const CinemaPage = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      {itemsToShow.length > 0 ? (
+      {movies.length > 0 ? (
         <>
           <MediaGrid
-            items={itemsToShow}
+            items={movies}
             onMore={(media) => {
-              // TODO: open dialog/modal here
-              console.log("More info:", media);
+              setSelected(media);
+              setDialogOpen(true);
             }}
           />
 
-          <MediaPagination
-            page={page}
-            totalPages={totalPages}
-            onPrev={() => setPage((p) => Math.max(1, p - 1))}
-            onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+          <MediaDetailsDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            media={selected}
           />
         </>
       ) : (
-        <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
+        <EmptyState />
       )}
     </div>
   );

@@ -1,55 +1,53 @@
+
+
 export const MediaType = {
-  Movie: "movie",
+  Cinema: "cinema",
   Podcast: "podcast",
-  Both: "both",
-  Tv: "tv",
+  Streaming: "streaming",
+  Home: "home",
 } as const;
 
 export type MediaType = (typeof MediaType)[keyof typeof MediaType];
 
-export interface IMovieMediaProps {
+export interface IStreamingProvider {
+  id: number;
+  name: string;
+  logo: string;
+}
+
+interface IBaseVisualMedia {
   id: number;
   title: string;
   image: string;
   description?: string;
-  type: typeof MediaType.Movie;
   year: number;
-  genres: string[];
-  providers?: {
-    id: number;
-    name: string;
-    logo: string;
-  }[];
+  genres: number[];
+  genreNames: string[];
+  providers: IStreamingProvider[];
+  rating?: number;
+  orginalLanguage?: string;
+  ageRating: string | null;
+}
+export interface ICinemaMovie extends IBaseVisualMedia {
+  section: typeof MediaType.Cinema;
+}
+
+export type StreamingKind = "movie" | "tv";
+
+export interface IStreamingMedia extends IBaseVisualMedia {
+  section: typeof MediaType.Streaming;
+  kind: StreamingKind;
 }
 
 export interface IPodcastProps {
-  id: string;
-  title: string;
-  image: string;
-  description?: string;
-  type: typeof MediaType.Podcast;
-  publisher: string;
-  category: string;
-  providers?: {
-    id: number;
-    name: string;
-    logo: string;
-  }[];
-}
-
-export interface ITvMediaProps {
   id: number;
   title: string;
   image: string;
   description?: string;
-  type: typeof MediaType.Tv;
-  year: number;
-  genres: string[];
-  providers?: {
-    id: number;
-    name: string;
-    logo: string;
-  }[];
+  section: typeof MediaType.Podcast;
+  publisher: string;
+  category: string;
+  year?: number;
 }
 
 export interface ITmdbMovie {
@@ -58,13 +56,6 @@ export interface ITmdbMovie {
   poster_path: string;
   release_date: string;
   genre_ids: number[];
-}
-
-export interface TmdbListResponse<T> {
-  page: number;
-  results: T[];
-  total_pages: number;
-  total_results: number;
 }
 
 export interface ITmdbTv {
@@ -76,12 +67,9 @@ export interface ITmdbTv {
   overview: string;
 }
 
-export interface ITvShowProps {
-  id: number;
-  title: string;
-  image: string;
-  description?: string;
-  type: typeof MediaType.Tv;
-  year: number;
-  genres: string[];
+export interface TmdbListResponse<T> {
+  page: number;
+  results: T[];
+  total_pages: number;
+  total_results: number;
 }
