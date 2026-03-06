@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {  HashRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/general/appLayout";
 import HomePage from "./components/pages/homepage";
 import AtHomePage from "./components/pages/atHomePage";
@@ -8,7 +8,7 @@ import WatchlistPage from "./components/pages/watchlistPage";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
@@ -18,7 +18,7 @@ function App() {
           <Route path="/watchlist" element={<WatchlistPage />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
