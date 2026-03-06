@@ -16,12 +16,12 @@ import {
   useMovieProviderList,
   useTvProviderList,
 } from "@/store/providerListStore";
+import { useTranslation } from "react-i18next";
 
 interface IFilterPanelProps {
   type: MediaType;
   kind?: "movie" | "tv";
 }
-
 
 const POPULAR_PROVIDER_NAMES = [
   "Netflix",
@@ -34,6 +34,7 @@ const POPULAR_PROVIDER_NAMES = [
 ];
 
 const FilterPanel = (props: IFilterPanelProps) => {
+  const { t } = useTranslation();
   // Selected filters (IDs)
   const selectedMovieGenres = useMovieGenres();
   const selectedTvGenres = useTvGenres();
@@ -70,10 +71,20 @@ const FilterPanel = (props: IFilterPanelProps) => {
 
   const handleClear = () => {
     clearQuery();
-    if (props.type === MediaType.Cinema) clearMovies();
-    else if (props.type === MediaType.Streaming) clearTv();
-    else if (props.type === MediaType.Podcast) clearPodcasts();
-    else clearAll();
+
+    if (props.type === MediaType.Cinema) {
+      clearMovies();
+    } else if (props.type === MediaType.Streaming) {
+      if (props.kind === "tv") {
+        clearTv();
+      } else {
+        clearMovies();
+      }
+    } else if (props.type === MediaType.Podcast) {
+      clearPodcasts();
+    } else {
+      clearAll();
+    }
   };
 
   // Pick correct provider list
@@ -118,7 +129,7 @@ const FilterPanel = (props: IFilterPanelProps) => {
               : props.type === MediaType.Streaming
                 ? "Streaming"
                 : "Podcast"}{" "}
-            Filters
+            {t("filterPanel.title")}
           </h3>
           <Button
             variant="ghost"
@@ -127,20 +138,22 @@ const FilterPanel = (props: IFilterPanelProps) => {
             disabled={!hasAnyFilters}
             className="text-xs"
           >
-            Clear
+            {t("filterPanel.reset")}
           </Button>
         </div>
 
         {isSearching && (
           <p className="mb-4 text-xs text-muted-foreground">
-            Clear search to use filters
+            {t("filterPanel.searchText")}
           </p>
         )}
 
         {/*  CINEMA */}
         {props.type === MediaType.Cinema && (
           <div className="mb-6">
-            <p className="mb-2 text-md font-medium">Genres</p>
+            <p className="mb-2 text-md font-medium">
+              {t("filterPanel.genres")}
+            </p>
             <div className="flex flex-wrap gap-2">
               {movieGenreList.map((genre) => {
                 const isActive = selectedMovieGenres.includes(genre.id);
@@ -200,7 +213,9 @@ const FilterPanel = (props: IFilterPanelProps) => {
             </div>
 
             <div>
-              <p className="mb-2 text-md font-medium">Streaming Services</p>
+              <p className="mb-2 text-md font-medium">
+                {t("filterPanel.streamingProviders")}
+              </p>
               <div className="space-y-2 max-h-64 overflow-auto pr-1">
                 {providerListToShow.map((provider) => {
                   const checked = providers.includes(provider.provider_id);
@@ -235,7 +250,9 @@ const FilterPanel = (props: IFilterPanelProps) => {
         {/*  PODCAST */}
         {props.type === MediaType.Podcast && (
           <div>
-            <p className="mb-2 text-md font-medium">Categories</p>
+            <p className="mb-2 text-md font-medium">
+              {t("filterPanel.podcastCategories")}
+            </p>
             <div className="flex flex-wrap gap-2">
               {podcastGenres.map((category) => {
                 const isActive = podcastCategories.includes(category);

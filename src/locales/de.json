@@ -1,0 +1,37 @@
+{
+  "filterPanel": {
+    "title": "Filter",
+    "reset": "Zurücksetzen",
+    "searchText": "Suche löschen, um Filter zu verwenden",
+    "genres": "Genres",
+    "streamingProviders": "Streaming-Anbieter",
+    "podcastCategories": "Podcast-Kategorien",
+    "category": "Kategorie"
+  },
+  "search": {
+    "title": "Suche"
+  },
+  "emptyState": {
+    "title": "Keine Ergebnisse gefunden",
+    "message": "Wir konnten keine Ergebnisse für deine Suche finden. Versuche, deine Filter oder Suchbegriffe anzupassen."
+  },
+  "media": {
+    "addToWatchlist": "Zur Watchlist hinzufügen",
+    "more": "Mehr"
+  },
+  "homePage": {
+    "title": "Was möchtest du ansehen?",
+    "movies": "Filme",
+    "tvShows": "Serien",
+    "movieText": "Entdecke Filme, die aktuell in Kinos in deiner Nähe laufen",
+    "homePageDiscoverText": "Finde etwas zum Anschauen",
+    "info1": "Up Next hilft dir, Filme zu finden, die aktuell im Kino laufen, Serien und Filme auf Streaming-Plattformen sowie hörenswerte Podcasts.",
+    "info2": "Nutze die Kategorien, um zu entdecken, was gerade verfügbar ist, und finde etwas Großartiges zum Anschauen oder Anhören.",
+    "info3": "Filme im Kino",
+    "info4": "Serien und Filme auf Streaming-Plattformen",
+    "info5": "Podcasts, die sich zu hören lohnen.",
+    "podcastText1": "Podcast-Bereich im Aufbau",
+    "podcastText2": "Wir stimmen noch die Mikrofone und richten das Studio ein.",
+    "podcastText3": "Podcasts werden hier bald verfügbar sein – bleib dran."
+  }
+}

@@ -6,6 +6,5 @@ export interface IMediaQuery {
   genres?: number[];
   providers?: number[];
   section: MediaType;
-  language: "de" | "en";
   kind?: "movie" | "tv";
 }

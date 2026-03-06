@@ -9,9 +9,11 @@ import { getStreamingMedia } from "@/api/streaming";
 import { getMovieAgeRating, getTvAgeRating } from "@/api/ageRatings";
 import type { IStreamingMedia } from "@/types/media";
 import { useAgeRatingStore } from "@/store/ageRatingStore";
+import i18n from "@/i18n";
 
 
 export function useStreamingMedia(props: IMediaQuery) {
+    const lang = i18n.language.startsWith("de") ? "de-DE" : "en-US";
   const [items, setItems] = useState<(IStreamingMedia)[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,6 @@ export function useStreamingMedia(props: IMediaQuery) {
               }));
 
               setProviders(item.id, providers);
-
             }
 
             let ageRating: string | null = ratings[item.id];
@@ -80,10 +81,10 @@ export function useStreamingMedia(props: IMediaQuery) {
   }, [
     props.page,
     props.kind,
-    props.language,
     props.query,
     props.genres?.join(","),
     props.providers?.join(","),
+    lang,
   ]);
 
   return { items, loading, error, totalPages };

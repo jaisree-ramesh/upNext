@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { tmdbFetch } from "@/lib/tmdb";
 import { mapTmdbMovieToMovie } from "@/mappers/movieMappers";
 import type { ITmdbMovie, TmdbListResponse } from "@/types/media";
@@ -6,7 +7,8 @@ import type { IMediaQuery } from "@/types/mediaQuery";
 const MAX_PAGES = 4;
 
 export async function getCinemaMovies(params: IMediaQuery) {
-  const { query, language, genres } = params;
+  const { query, genres } = params;
+    const lang = i18n.language.startsWith("de") ? "de-DE" : "en-US";
 
   const region = "DE";
 
@@ -22,7 +24,7 @@ export async function getCinemaMovies(params: IMediaQuery) {
 
     searchParams.set("page", String(page));
     searchParams.set("region", region);
-    searchParams.set("language", language === "de" ? "de-DE" : "en-US");
+    searchParams.set("language", lang);
 
     const url = `/movie/now_playing?${searchParams.toString()}`;
 
@@ -57,10 +59,6 @@ export async function getCinemaMovies(params: IMediaQuery) {
       movie.genre_ids?.some((g) => genres.includes(g)),
     );
   }
-
-  console.log(
-    `Collected ${allResults.length} movies → ${filtered.length} after filters`,
-  );
 
   return {
     results: filtered.map(mapTmdbMovieToMovie),

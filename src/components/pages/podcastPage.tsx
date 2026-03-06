@@ -1,45 +1,19 @@
-// import MediaCarousel from "../media/mediaCarousel";
-import { mockPodcasts } from "../mock/media";
-import { useEffect } from "react";
-import { usePageHeader } from "../../context/PageHeaderContect";
-import { useFilterActions, usePodcastCategories } from "../../store/filterStore";
+import { useTranslation } from "react-i18next";
 
 const PodcastPage = () => {
-  //
-  // const { setTitle, query, setFilterType } = usePageHeader();
-  // const podcastCategories = usePodcastCategories();
-  // const { clearAll } = useFilterActions();
-
-  // useEffect(() => {
-  //   setTitle("Find something to listen to");
-  //   setFilterType("podcast");
-  //   clearAll(); // reset when entering podcasts
-  // }, [setTitle, setFilterType, clearAll]);
-
-
-
-  // const itemsToShow = useFilteredMedia({
-  //   items: mockPodcasts,
-  //   query,
-  //   filterFn: () => {
-  //     if (podcastCategories.length === 0) {
-  //       return mockPodcasts;
-  //     }
-
-  //     return mockPodcasts.filter((podcast) =>
-  //       podcastCategories.includes(podcast.category as any),
-  //     );
-  //   },
-  // });
+  const { t } = useTranslation();
 
   return (
     <div>
-      {/* {itemsToShow.length > 0 ? (
-        // <MediaCarousel items={itemsToShow} />
-        <></>
-      ) : ( */}
-        <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
-      {/* )} */}
+      <p className="mt-12 text-center text-muted-foreground">
+        {t("homePage.podcastText1")}
+      </p>
+      <p className="text-center text-muted-foreground">
+        {t("homePage.podcastText2")}
+      </p>
+      <p className="text-center text-muted-foreground">
+        {t("homePage.podcastText3")}
+      </p>
     </div>
   );
 };

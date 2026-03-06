@@ -1,6 +1,7 @@
 import { cn } from "../../lib/utils";
 import { Input } from "../ui/input";
 import { AnimatedGradientText } from "../ui/animated-gradient-text";
+import { useTranslation } from "react-i18next";
 
 interface ISearchAreaProps {
   value: string;
@@ -8,12 +9,13 @@ interface ISearchAreaProps {
 }
 
 const SearchArea = (props: ISearchAreaProps) => {
+  const { t } = useTranslation();
   return (
     <div className="group relative mx-auto flex w-full max-w-md items-center justify-center rounded-full px-4 py-1.5 sm:mx-0 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f]">
       {/* Animated gradient border */}
       <span
         className={cn(
-          "animate-gradient absolute inset-0 block h-full w-full rounded-[inherit] bg-gradient-to-r from-[#ffaa40]/50 via-[#9c40ff]/50 to-[#ffaa40]/50 bg-[length:300%_100%] p-[1px]"
+          "animate-gradient absolute inset-0 block h-full w-full rounded-[inherit] bg-gradient-to-r from-[#ffaa40]/50 via-[#9c40ff]/50 to-[#ffaa40]/50 bg-[length:300%_100%] p-[1px]",
         )}
         style={{
           WebkitMask:
@@ -36,7 +38,7 @@ const SearchArea = (props: ISearchAreaProps) => {
       {/* Animated label */}
       <div className="pointer-events-none relative z-10 ml-2 shrink-0">
         <AnimatedGradientText className="text-sm font-medium" speed={1.2}>
-          Search
+          {t("search.title")}
         </AnimatedGradientText>
       </div>
     </div>

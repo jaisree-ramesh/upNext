@@ -14,8 +14,10 @@ import { MediaType, type IStreamingMedia } from "@/types/media";
 import GridSkeleton from "../media/gridSkeleton";
 import { ShimmerButton } from "../ui/shimmer-button";
 import EmptyState from "../media/emptyState";
+import { useTranslation } from "react-i18next";
 
 const AtHomePage = () => {
+  const { t } = useTranslation();
   const { setTitle, query, setFilterType, streamingKind, setStreamingKind } =
     usePageHeader();
 
@@ -36,7 +38,6 @@ const AtHomePage = () => {
     page,
     section: MediaType.Streaming,
     kind: streamingKind,
-    language: "de",
     query,
     genres: activeGenres,
     providers,
@@ -73,7 +74,7 @@ const AtHomePage = () => {
           onClick={() => setStreamingKind("movie")}
           borderRadius="7px"
         >
-          Movies
+          {t("homePage.movies")}
         </ShimmerButton>
         <ShimmerButton
           background={` ${streamingKind === "tv" ? "black" : "white"}`}
@@ -81,7 +82,7 @@ const AtHomePage = () => {
           onClick={() => setStreamingKind("tv")}
           borderRadius="7px"
         >
-          TV Shows
+          {t("homePage.tvShows")}
         </ShimmerButton>
       </div>
 

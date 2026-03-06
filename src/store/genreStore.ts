@@ -6,7 +6,7 @@ interface GenreState {
   tvGenres: TMDBGenre[];
   loading: boolean;
   error?: string;
-  loadGenres: (type: "movie" | "tv", language: "de" | "en") => Promise<void>;
+  loadGenres: (type: "movie" | "tv") => Promise<void>;
 }
 
 export const useGenreStore = create<GenreState>((set) => ({
@@ -15,10 +15,10 @@ export const useGenreStore = create<GenreState>((set) => ({
   loading: false,
   error: undefined,
 
-  loadGenres: async (type, language) => {
+  loadGenres: async (type) => {
     try {
       set({ loading: true, error: undefined });
-      const genres = await fetchGenres(type, language);
+      const genres = await fetchGenres(type);
 
       if (type === "movie") {
         set({ movieGenres: genres, loading: false });

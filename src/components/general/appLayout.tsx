@@ -11,6 +11,7 @@ import { useGenreStore } from "@/store/genreStore";
 import { MediaType } from "@/types/media";
 import { useProviderListStore } from "@/store/providerListStore";
 import HomeInfoPanel from "../pages/homeInfoPanel";
+import { useTranslation } from "react-i18next";
 
 const LayoutInner = () => {
   const { title, query, setQuery, filterType, streamingKind } = usePageHeader();
@@ -19,13 +20,12 @@ const LayoutInner = () => {
 
   const loadGenres = useGenreStore((s) => s.loadGenres);
 
-  useEffect(() => {
-    loadGenres("tv", "de");
-  }, [loadGenres]);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
-    loadGenres("movie", "de");
-  }, [loadGenres]);
+    loadGenres("tv");
+    loadGenres("movie");
+  }, [i18n.language, loadGenres]);
 
   const loadMovieProviders = useProviderListStore((s) => s.loadMovieProviders);
   const loadTvProviders = useProviderListStore((s) => s.loadTvProviders);

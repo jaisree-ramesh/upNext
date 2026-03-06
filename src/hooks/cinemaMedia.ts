@@ -6,6 +6,7 @@ import { useProviderStore } from "@/store/providerStore";
 import type { IMediaQuery } from "@/types/mediaQuery";
 import { useAgeRatingStore } from "@/store/ageRatingStore";
 import { getMovieAgeRating } from "@/api/ageRatings";
+import i18n from "@/i18n";
 
 export function useCinemaMedia(props: IMediaQuery) {
   const [movies, setMovies] = useState<ICinemaMovie[]>([]);
@@ -18,6 +19,7 @@ export function useCinemaMedia(props: IMediaQuery) {
 
   const ratings = useAgeRatingStore((s) => s.ratings);
   const setRating = useAgeRatingStore((s) => s.setRating);
+  const lang = i18n.language.startsWith("de") ? "de-DE" : "en-US";
 
   useEffect(() => {
     async function loadMovies() {
@@ -27,7 +29,6 @@ export function useCinemaMedia(props: IMediaQuery) {
         const { results } = await getCinemaMovies({
           page: props.page,
           section: MediaType.Cinema,
-          language: props.language || "de",
           query: props.query,
           genres: props.genres || [],
           providers: props.providers || [],
@@ -98,7 +99,7 @@ export function useCinemaMedia(props: IMediaQuery) {
   }, [
     props.page,
     props.section,
-    props.language,
+    lang,
     props.query,
     props.genres?.join(","),
     props.providers?.join(","),

@@ -27,7 +27,7 @@ export async function getMovieAgeRating(
   return cert || null;
 }
 
-// 📺 TV
+//  TV
 interface TvContentRatingsResponse {
   results: {
     iso_3166_1: string;

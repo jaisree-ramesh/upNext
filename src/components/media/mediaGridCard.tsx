@@ -7,6 +7,8 @@ import {
   TooltipTrigger,
 } from "../../components/ui/tooltip";
 import { Card, CardContent } from "../ui/card";
+import { useTranslation } from "react-i18next";
+
 
 interface IGridCardProps {
   media: IStreamingMedia | ICinemaMovie;
@@ -16,6 +18,8 @@ interface IGridCardProps {
 }
 
 const MediaGridCard = (props: IGridCardProps) => {
+  const { t } = useTranslation();
+
   return (
     // <Card className="relative   border-none p-0 shadow overflow-hidden">
     <Card className="group relative border-none p-0 shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -55,7 +59,9 @@ const MediaGridCard = (props: IGridCardProps) => {
                     />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent>Add to watchlist</TooltipContent>
+                <TooltipContent>
+                  <p>{t("media.addToWatchlist")}</p>
+                </TooltipContent>
               </Tooltip>
             </div>
           </div>
@@ -81,7 +87,7 @@ const MediaGridCard = (props: IGridCardProps) => {
             onClick={() => props.onMore(props.media)}
             className="mt-2 text-xs text-primary flex items-center gap-1"
           >
-            <Info className="h-4 w-4" /> More
+            <Info className="h-4 w-4" /> {t("media.more")}
           </button>
         </div>
         {/* Meta */}

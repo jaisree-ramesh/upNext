@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { tmdbFetch } from "@/lib/tmdb";
 import { mapTmdbMovieToStreaming } from "@/mappers/streamingMappers";
 import { mapTmdbTvToMedia } from "@/mappers/tvMappers";
@@ -5,7 +6,7 @@ import type { ITmdbMovie, ITmdbTv, TmdbListResponse } from "@/types/media";
 import type { IMediaQuery } from "@/types/mediaQuery";
 
 export async function getStreamingMedia(params: IMediaQuery) {
-  const { page, query, genres = [], providers = [], language, kind } = params;
+  const { page, query, genres = [], providers = [], kind } = params;
 
   if (!kind) {
     throw new Error(
@@ -19,7 +20,8 @@ export async function getStreamingMedia(params: IMediaQuery) {
   searchParams.set("page", String(page));
   searchParams.set("watch_region", region);
   searchParams.set("region", region);
-  searchParams.set("language", language === "de" ? "de-DE" : "en-US");
+   const lang = i18n.language.startsWith("de") ? "de-DE" : "en-US";
+  searchParams.set("language", lang);
 
   let endpoint = "";
 

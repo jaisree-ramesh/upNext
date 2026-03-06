@@ -1,0 +1,37 @@
+{
+  "filterPanel": {
+    "title": "Filter",
+    "reset": "Reset",
+    "searchText": "Clear search to use filters",
+    "genres": "Genres",
+    "streamingProviders": "Streaming Providers",
+    "podcastCategories": "Podcast Categories",
+    "category": "Category"
+  },
+  "search": {
+    "title": "Search"
+  },
+  "emptyState": {
+    "title": "No results found",
+    "message": "We couldn't find any results matching your search. Try adjusting your filters or search terms."
+  },
+  "media": {
+    "addToWatchlist": "Add to Watchlist",
+    "more": "More"
+  },
+  "homePage": {
+    "title": "What do you want to watch?",
+    "movies": "Movies",
+    "tvShows": "TV Shows",
+    "movieText": "Discover movies available in the Theater near you",
+    "homePageDiscoverText": " Discover what to watch",
+    "info1": " Up Next helps you find movies currently playing in theaters, shows available on streaming platforms, and podcasts worth listening to.",
+    "info2": " Use the categories to explore what's available right now and find something great to watch or listen to.",
+    "info3": " Movies in theaters",
+    "info4": "Shows and movies available on streaming platforms",
+    "info5": "Podcasts worth listening to.",
+    "podcastText1": "Podcast Zone Under Construction",
+    "podcastText2": "We're still tuning the microphones and setting up the studio.",
+    "podcastText3": "Podcasts will be available here very soon — stay tuned."
+  }
+}

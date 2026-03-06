@@ -1,6 +1,7 @@
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { Bookmark, Home } from "lucide-react";
 import { Link} from "react-router-dom";
+import LanguageToggle from "./languageToggle";
 
 const Header = () => {
 
@@ -21,6 +22,7 @@ const Header = () => {
 
           {/* Theme Toggler */}
           <AnimatedThemeToggler className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" />
+          <LanguageToggle />
         </div>
       </div>
     </header>

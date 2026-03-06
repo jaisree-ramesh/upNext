@@ -11,10 +11,13 @@ import { MediaType, type ICinemaMovie } from "@/types/media";
 import GridSkeleton from "../media/gridSkeleton";
 import EmptyState from "../media/emptyState";
 import MediaDetailsDialog from "../media/mediaDetailsDialog";
+import { useTranslation } from "react-i18next";
+
 
 const CinemaPage = () => {
-  const { setTitle, query, setFilterType } = usePageHeader();
+  const { t } = useTranslation();
 
+  const { setTitle, query, setFilterType } = usePageHeader();
   const movieGenres = useMovieGenres();
   const providers = useProviders();
   const { clearAll } = useFilterActions();
@@ -34,7 +37,7 @@ const CinemaPage = () => {
   });
 
   useEffect(() => {
-    setTitle("Find something to watch in the cinema");
+    setTitle(t("homePage.movieText"));
     setFilterType(MediaType.Cinema);
     clearAll();
   }, [setTitle, setFilterType, clearAll]);

@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { tmdbFetch } from "@/lib/tmdb";
 
 export interface TMDBGenre {
@@ -7,9 +8,9 @@ export interface TMDBGenre {
 
 export async function fetchGenres(
   type: "movie" | "tv",
-  language: "de" | "en",
+  // language: "de" | "en",
 ): Promise<TMDBGenre[]> {
-  const lang = language === "de" ? "de-DE" : "en-US";
+  const lang = i18n.language.startsWith("de") ? "de-DE" : "en-US";
 
   const data = await tmdbFetch<{ genres: TMDBGenre[] }>(
     `/genre/${type}/list?language=${lang}`,
