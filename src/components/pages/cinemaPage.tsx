@@ -30,7 +30,6 @@ const CinemaPage = () => {
   const { movies, loading, error } = useCinemaMedia({
     page,
     section: MediaType.Cinema,
-    language: "de",
     query,
     genres: movieGenres,
     providers,

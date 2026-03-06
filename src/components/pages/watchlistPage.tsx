@@ -1,79 +1,46 @@
-import { useEffect } from "react";
-// import MediaCarousel from "../media/mediaCarousel";
+import { useEffect, useState } from "react";
 import { useWatchlist } from "../../store/watchlistStore";
 import { usePageHeader } from "../../context/PageHeaderContect";
-import {
-  useFilterActions,
-  useMovieGenres,
-  usePodcastCategories,
-  useProviders,
-} from "../../store/filterStore";
-import { MediaType } from "../../types/media";
-// import { useFilteredMedia } from "../../hooks/filteredMedia";
+import { useFilterActions } from "../../store/filterStore";
+import MediaGrid from "../media/mediaGrid";
+import type { ICinemaMovie, IStreamingMedia } from "@/types/media";
+import EmptyState from "../media/emptyState";
+import MediaDetailsDialog from "../media/mediaDetailsDialog";
 
 const WatchListPage = () => {
   const items = useWatchlist();
-  // const { setTitle, query, setFilterType } = usePageHeader();
-  const movieGenres = useMovieGenres();
-  const providers = useProviders();
-  const podcastCategories = usePodcastCategories();
-
+  const { setTitle, setFilterType } = usePageHeader();
   const { clearAll } = useFilterActions();
 
-  // useEffect(() => {
-  //   setTitle("Your Watchlist");
-  //   setFilterType("both");
-  //   clearAll();
-  // }, [setTitle, setFilterType, clearAll]);
+  const [selected, setSelected] = useState<
+    ICinemaMovie | IStreamingMedia | null
+  >(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
+  useEffect(() => {
+    setTitle("Your Watchlist");
+    setFilterType("watchlist"); 
+    clearAll();
+  }, [setTitle, setFilterType, clearAll]);
 
-
-  // const itemsToShow = useFilteredMedia({
-  //   items,
-  //   query,
-  //   filterFn: () => {
-  //     const hasMovieFilters = movieGenres.length > 0 || providers.length > 0;
-  //     const hasPodcastFilters = podcastCategories.length > 0;
-
-  //     if (!hasMovieFilters && !hasPodcastFilters) {
-  //       return items;
-  //     }
-
-  //     const movies = items.filter((i) => i.type === MediaType.Movie);
-  //     const podcasts = items.filter((i) => i.type === MediaType.Podcast);
-
-  //     const filteredMovies = hasMovieFilters
-  //       ? filterMovies(movies, {
-  //           query: "",
-  //           genres: movieGenres,
-  //           providers,
-  //         })
-  //       : [];
-
-  //     const filteredPodcasts = hasPodcastFilters
-  //       ? podcasts.filter((p) => podcastCategories.includes(p.category))
-  //       : [];
-
-  //     return [...filteredMovies, ...filteredPodcasts];
-  //   },
-  // });
-
-  // if (items.length === 0) {
-  //   return (
-  //     <div className="py-20 text-center text-muted-foreground">
-  //       Your watchlist is empty
-  //     </div>
-  //   );
-  // }
+  if (items.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
-    <div>
-      {/* {itemsToShow.length > 0 ? (
-        // <MediaCarousel items={itemsToShow} />
-        <></>
-      ) : ( */}
-        <p className="mt-12 text-center text-muted-foreground">Nothing found</p>
-      {/* )} */}
+    <div className="mt-6">
+      <MediaGrid
+        items={items}
+        onMore={(media) => {
+          setSelected(media);
+          setDialogOpen(true);
+        }}
+      />
+      <MediaDetailsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        media={selected}
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ export const MediaType = {
   Podcast: "podcast",
   Streaming: "streaming",
   Home: "home",
+  Watchlist: "watchlist",
 } as const;
 
 export type MediaType = (typeof MediaType)[keyof typeof MediaType];

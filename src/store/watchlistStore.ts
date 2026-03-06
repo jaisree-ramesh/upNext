@@ -1,20 +1,23 @@
-import type { IMovieMediaProps, IPodcastProps, ITvMediaProps } from "../types/media";
+import type {
+  ICinemaMovie,
+  IPodcastProps,
+  IStreamingMedia,
+} from "../types/media";
 import { persist } from "zustand/middleware";
 import { create } from "zustand";
 
 interface WatchListActions {
-  add: (item: IMovieMediaProps | IPodcastProps | ITvMediaProps) => void;
-  remove: (id: string) => void;
-  toggle: (item: IMovieMediaProps | IPodcastProps | ITvMediaProps) => void;
-  isInWatchlist: (id: string) => boolean;
+  add: (item: ICinemaMovie | IPodcastProps | IStreamingMedia) => void;
+  remove: (id: number) => void;
+  toggle: (item: ICinemaMovie | IPodcastProps | IStreamingMedia) => void;
+  isInWatchlist: (id: number) => boolean;
   clear: () => void;
 }
 
 interface WatchlistState {
-  items: (IMovieMediaProps | IPodcastProps | ITvMediaProps)[];
+  items: (ICinemaMovie | IPodcastProps | IStreamingMedia)[];
   actions: WatchListActions;
 }
-
 
 export const useWatchlistStore = create<WatchlistState>()(
   persist(
@@ -59,12 +62,10 @@ export const useWatchlistStore = create<WatchlistState>()(
       partialize: (state) => ({
         items: state.items,
       }),
-    }
-  )
+    },
+  ),
 );
 
 export const useWatchlist = () => useWatchlistStore((state) => state.items);
 export const useWatchlistActions = () =>
   useWatchlistStore((state) => state.actions);
-
-
