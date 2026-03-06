@@ -74,14 +74,9 @@ Filters automatically adapt based on the current page.
 ### APIs (Planned)
 
 * **TMDB** – movies & TV metadata
-* **JustWatch (unofficial)** – streaming availability
 * **ListenNotes** – podcasts
 
-### Testing (Planned)
 
-* **Jest**
-* **React Testing Library**
-* **MSW** for API mocking
 
 ---
 
